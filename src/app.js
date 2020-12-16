@@ -104,7 +104,7 @@ async function startMonitor(e) {
 
   var audioCtx = new AudioContext();
   var source = audioCtx.createMediaStreamSource(sharedStream);
-  sound = Sound.from(source, audioCtx, "input").analyze(32, -125, 0, 0.8);
+  sound = Sound.from(source, audioCtx, "input").analyze(512, -125, 0, 0.8);
   console.log(sound);
 }
 
