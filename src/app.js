@@ -66,7 +66,6 @@ async function getSharedStream(displayMediaOptions) {
 }
 
 async function startMonitor(e) {
- 
   const gdmOptions = {
     video: true,
     audio: true,
@@ -81,6 +80,6 @@ async function startMonitor(e) {
 
   var audioCtx = new AudioContext();
   var source = audioCtx.createMediaStreamSource(sharedStream);
-  sound = Sound.from(source, audioCtx, "input").analyze(128);
+  sound = Sound.from(source, audioCtx, "input").analyze(32, -130,0, 0.8);
   console.log(sound);
 }
