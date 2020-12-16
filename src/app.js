@@ -100,12 +100,11 @@ async function startMonitor(e) {
     return;
   }
   const audio = sharedStream.getAudioTracks();
-  console.log(audio[0]);
 
   var audioCtx = new AudioContext();
   var source = audioCtx.createMediaStreamSource(sharedStream);
   sound = Sound.from(source, audioCtx, "input").analyze(512, -125, 0, 0.8);
-  console.log(sound);
+  
 }
 
 function frequencty_to_py(frequency) {
