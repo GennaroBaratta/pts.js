@@ -76,7 +76,6 @@ async function startMonitor(e) {
     space.background = "red";
     return;
   }
-  space.background = "#ffffff";
   const audio = sharedStream.getAudioTracks();
   console.log(audio[0]);
 
