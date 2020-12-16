@@ -29,9 +29,32 @@ space.add({
 
   animate: (time, ftime) => {
     if (sound && sound.playable) {
-      sound.freqDomainTo(space.size).forEach((t, i) => {
-        form.fillOnly(colors[i % 5]).point(t, 30);
-      });
+      let fd = sound.freqDomainTo([space.size.y, space.size.x / 2]);
+      let h0 = space.size.y / fd.length;
+      form.font(39, "bold");
+      for (let i = 0, len = fd.length; i < len; i++) {
+        let f = fd[i];
+        let hz = Math.floor((i * sound.sampleRate) / (sound.binSize * 2)); // bin size is fftSize/2
+        let color = ["#f03", "#0c9", "#62e"][i % 3];
+        let y = frequencty_to_py(hz+20);
+        let h = h0+ (space.height -y)/15;
+        // draw spikes
+        form.fillOnly(color).polygon([
+          [space.center.x, y],
+          [space.center.x, y + h],
+          [f.y + space.center.x, y + h / 2],
+        ]);
+        // draw circle
+        form
+          .fillOnly(color)
+          .point(
+            [space.center.x - f.y, y + h / 2],
+            h / 2 + (30 * f.y) / space.size.x,
+            "circle"
+          );
+        // draw text
+        
+      }
     }
     form.stroke("black", 1, "round", "butt");
     form.fill(false).point(space.pointer, radius.current, "circle");
@@ -73,6 +96,7 @@ async function startMonitor(e) {
   const sharedStream = await getSharedStream(gdmOptions);
   if (!sharedStream) {
     space.background = "red";
+    sound = null;
     return;
   }
   const audio = sharedStream.getAudioTracks();
@@ -80,6 +104,15 @@ async function startMonitor(e) {
 
   var audioCtx = new AudioContext();
   var source = audioCtx.createMediaStreamSource(sharedStream);
-  sound = Sound.from(source, audioCtx, "input").analyze(32, -125,0, 0.8);
+  sound = Sound.from(source, audioCtx, "input").analyze(32, -125, 0, 0.8);
   console.log(sound);
+}
+
+function frequencty_to_py(frequency) {
+  const min_f = Math.log(20) / Math.log(10),
+    max_f = Math.log(24000) / Math.log(10),
+    range = max_f - min_f,
+    position_py =
+      ((Math.log(frequency) / Math.log(10) - min_f) / range) * space.height-20;
+  return position_py;
 }
